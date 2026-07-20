@@ -10,3 +10,7 @@ coverage.out
 cpu.out
 mem.out
 *.test
+
+.aider*
+logs/
+vendor/
