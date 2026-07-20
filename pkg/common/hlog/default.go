@@ -1,132 +1,72 @@
-/*
- * Copyright 2022 CloudWeGo Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package hlog
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log"
-	"os"
 )
 
-// Fatal calls the default logger's Fatal method and then os.Exit(1).
-func Fatal(v ...interface{}) {
-	logger.Fatal(v...)
-}
+func Fatal(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Error calls the default logger's Error method.
-func Error(v ...interface{}) {
-	logger.Error(v...)
-}
+func Error(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Warn calls the default logger's Warn method.
-func Warn(v ...interface{}) {
-	logger.Warn(v...)
-}
+func Warn(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Notice calls the default logger's Notice method.
-func Notice(v ...interface{}) {
-	logger.Notice(v...)
-}
+func Notice(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Info calls the default logger's Info method.
-func Info(v ...interface{}) {
-	logger.Info(v...)
-}
+func Info(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Debug calls the default logger's Debug method.
-func Debug(v ...interface{}) {
-	logger.Debug(v...)
-}
+func Debug(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Trace calls the default logger's Trace method.
-func Trace(v ...interface{}) {
-	logger.Trace(v...)
-}
+func Trace(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Fatalf calls the default logger's Fatalf method and then os.Exit(1).
-func Fatalf(format string, v ...interface{}) {
-	logger.Fatalf(format, v...)
-}
+func Fatalf(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Errorf calls the default logger's Errorf method.
-func Errorf(format string, v ...interface{}) {
-	logger.Errorf(format, v...)
-}
+func Errorf(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Warnf calls the default logger's Warnf method.
-func Warnf(format string, v ...interface{}) {
-	logger.Warnf(format, v...)
-}
+func Warnf(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Noticef calls the default logger's Noticef method.
-func Noticef(format string, v ...interface{}) {
-	logger.Noticef(format, v...)
-}
+func Noticef(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Infof calls the default logger's Infof method.
-func Infof(format string, v ...interface{}) {
-	logger.Infof(format, v...)
-}
+func Infof(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Debugf calls the default logger's Debugf method.
-func Debugf(format string, v ...interface{}) {
-	logger.Debugf(format, v...)
-}
+func Debugf(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// Tracef calls the default logger's Tracef method.
-func Tracef(format string, v ...interface{}) {
-	logger.Tracef(format, v...)
-}
+func Tracef(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-// CtxFatalf calls the default logger's CtxFatalf method and then os.Exit(1).
 func CtxFatalf(ctx context.Context, format string, v ...interface{}) {
-	logger.CtxFatalf(ctx, format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
-// CtxErrorf calls the default logger's CtxErrorf method.
 func CtxErrorf(ctx context.Context, format string, v ...interface{}) {
-	logger.CtxErrorf(ctx, format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
-// CtxWarnf calls the default logger's CtxWarnf method.
 func CtxWarnf(ctx context.Context, format string, v ...interface{}) {
-	logger.CtxWarnf(ctx, format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
-// CtxNoticef calls the default logger's CtxNoticef method.
 func CtxNoticef(ctx context.Context, format string, v ...interface{}) {
-	logger.CtxNoticef(ctx, format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
-// CtxInfof calls the default logger's CtxInfof method.
 func CtxInfof(ctx context.Context, format string, v ...interface{}) {
-	logger.CtxInfof(ctx, format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
-// CtxDebugf calls the default logger's CtxDebugf method.
 func CtxDebugf(ctx context.Context, format string, v ...interface{}) {
-	logger.CtxDebugf(ctx, format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
-// CtxTracef calls the default logger's CtxTracef method.
 func CtxTracef(ctx context.Context, format string, v ...interface{}) {
-	logger.CtxTracef(ctx, format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
 type defaultLogger struct {
@@ -135,115 +75,77 @@ type defaultLogger struct {
 	depth  int
 }
 
-func (ll *defaultLogger) SetOutput(w io.Writer) {
-	ll.stdlog.SetOutput(w)
-}
+func (ll *defaultLogger) SetOutput(w io.Writer) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) SetLevel(lv Level) {
-	ll.level = lv
-}
+func (ll *defaultLogger) SetLevel(lv Level) { _ = "STUB: not implemented"; return }
 
 func (ll *defaultLogger) logf(lv Level, format *string, v ...interface{}) {
-	if ll.level > lv {
-		return
-	}
-	msg := lv.toString()
-	if format != nil {
-		if len(v) > 0 {
-			msg += fmt.Sprintf(*format, v...)
-		} else {
-			msg += *format
-		}
-	} else {
-		msg += fmt.Sprint(v...)
-	}
-
-	ll.stdlog.Output(ll.depth, msg)
-	if lv == LevelFatal {
-		os.Exit(1)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
-func (ll *defaultLogger) Fatal(v ...interface{}) {
-	ll.logf(LevelFatal, nil, v...)
-}
+func (ll *defaultLogger) Fatal(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Error(v ...interface{}) {
-	ll.logf(LevelError, nil, v...)
-}
+func (ll *defaultLogger) Error(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Warn(v ...interface{}) {
-	ll.logf(LevelWarn, nil, v...)
-}
+func (ll *defaultLogger) Warn(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Notice(v ...interface{}) {
-	ll.logf(LevelNotice, nil, v...)
-}
+func (ll *defaultLogger) Notice(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Info(v ...interface{}) {
-	ll.logf(LevelInfo, nil, v...)
-}
+func (ll *defaultLogger) Info(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Debug(v ...interface{}) {
-	ll.logf(LevelDebug, nil, v...)
-}
+func (ll *defaultLogger) Debug(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Trace(v ...interface{}) {
-	ll.logf(LevelTrace, nil, v...)
-}
+func (ll *defaultLogger) Trace(v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Fatalf(format string, v ...interface{}) {
-	ll.logf(LevelFatal, &format, v...)
-}
+func (ll *defaultLogger) Fatalf(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Errorf(format string, v ...interface{}) {
-	ll.logf(LevelError, &format, v...)
-}
+func (ll *defaultLogger) Errorf(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Warnf(format string, v ...interface{}) {
-	ll.logf(LevelWarn, &format, v...)
-}
+func (ll *defaultLogger) Warnf(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
 func (ll *defaultLogger) Noticef(format string, v ...interface{}) {
-	ll.logf(LevelNotice, &format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
-func (ll *defaultLogger) Infof(format string, v ...interface{}) {
-	ll.logf(LevelInfo, &format, v...)
-}
+func (ll *defaultLogger) Infof(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Debugf(format string, v ...interface{}) {
-	ll.logf(LevelDebug, &format, v...)
-}
+func (ll *defaultLogger) Debugf(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (ll *defaultLogger) Tracef(format string, v ...interface{}) {
-	ll.logf(LevelTrace, &format, v...)
-}
+func (ll *defaultLogger) Tracef(format string, v ...interface{}) { _ = "STUB: not implemented"; return }
 
 func (ll *defaultLogger) CtxFatalf(ctx context.Context, format string, v ...interface{}) {
-	ll.logf(LevelFatal, &format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (ll *defaultLogger) CtxErrorf(ctx context.Context, format string, v ...interface{}) {
-	ll.logf(LevelError, &format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (ll *defaultLogger) CtxWarnf(ctx context.Context, format string, v ...interface{}) {
-	ll.logf(LevelWarn, &format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (ll *defaultLogger) CtxNoticef(ctx context.Context, format string, v ...interface{}) {
-	ll.logf(LevelNotice, &format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (ll *defaultLogger) CtxInfof(ctx context.Context, format string, v ...interface{}) {
-	ll.logf(LevelInfo, &format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (ll *defaultLogger) CtxDebugf(ctx context.Context, format string, v ...interface{}) {
-	ll.logf(LevelDebug, &format, v...)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (ll *defaultLogger) CtxTracef(ctx context.Context, format string, v ...interface{}) {
-	ll.logf(LevelTrace, &format, v...)
+	_ = "STUB: not implemented"
+	return
 }

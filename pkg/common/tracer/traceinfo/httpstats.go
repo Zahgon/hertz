@@ -1,19 +1,3 @@
-/*
- * Copyright 2022 CloudWeGo Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package traceinfo
 
 import (
@@ -38,47 +22,21 @@ type event struct {
 	time   time.Time
 }
 
-// Event implements the Event interface.
-func (e *event) Event() stats.Event {
-	return e.event
-}
+func (e *event) Event() stats.Event { _ = "STUB: not implemented"; return *new(stats.Event) }
 
-// Status implements the Event interface.
-func (e *event) Status() stats.Status {
-	return e.status
-}
+func (e *event) Status() stats.Status { _ = "STUB: not implemented"; return *new(stats.Status) }
 
-// Info implements the Event interface.
-func (e *event) Info() string {
-	return e.info
-}
+func (e *event) Info() string { _ = "STUB: not implemented"; return "" }
 
-// Time implements the Event interface.
-func (e *event) Time() time.Time {
-	return e.time
-}
+func (e *event) Time() time.Time { _ = "STUB: not implemented"; return *new(time.Time) }
 
-// IsNil implements the Event interface.
-func (e *event) IsNil() bool {
-	return e == nil
-}
+func (e *event) IsNil() bool { _ = "STUB: not implemented"; return false }
 
-func newEvent() interface{} {
-	return &event{}
-}
+func newEvent() interface{} { _ = "STUB: not implemented"; return nil }
 
-func (e *event) zero() {
-	e.event = nil
-	e.status = 0
-	e.info = ""
-	e.time = time.Time{}
-}
+func (e *event) zero() { _ = "STUB: not implemented"; return }
 
-// Recycle reuses the event.
-func (e *event) Recycle() {
-	e.zero()
-	eventPool.Put(e)
-}
+func (e *event) Recycle() { _ = "STUB: not implemented"; return }
 
 type httpStats struct {
 	sync.RWMutex
@@ -97,111 +55,35 @@ func init() {
 	eventPool.New = newEvent
 }
 
-// Record implements the HTTPStats interface.
 func (h *httpStats) Record(e stats.Event, status stats.Status, info string) {
-	if e.Level() > h.level {
-		return
-	}
-	eve := eventPool.Get().(*event)
-	eve.event = e
-	eve.status = status
-	eve.info = info
-	eve.time = time.Now()
-
-	idx := e.Index()
-	h.Lock()
-	h.eventMap[idx] = eve
-	h.Unlock()
+	_ = "STUB: not implemented"
+	return
 }
 
-// SendSize implements the HTTPStats interface.
-func (h *httpStats) SendSize() int {
-	return h.sendSize
-}
+func (h *httpStats) SendSize() int { _ = "STUB: not implemented"; return 0 }
 
-// RecvSize implements the HTTPStats interface.
-func (h *httpStats) RecvSize() int {
-	return h.recvSize
-}
+func (h *httpStats) RecvSize() int { _ = "STUB: not implemented"; return 0 }
 
-// Error implements the HTTPStats interface.
-func (h *httpStats) Error() error {
-	return h.err
-}
+func (h *httpStats) Error() error { _ = "STUB: not implemented"; return nil }
 
-// Panicked implements the HTTPStats interface.
-func (h *httpStats) Panicked() (bool, interface{}) {
-	return h.panicErr != nil, h.panicErr
-}
+func (h *httpStats) Panicked() (bool, interface{}) { _ = "STUB: not implemented"; return false, nil }
 
-// GetEvent implements the HTTPStats interface.
-func (h *httpStats) GetEvent(e stats.Event) Event {
-	idx := e.Index()
-	h.RLock()
-	evt := h.eventMap[idx]
-	h.RUnlock()
-	if evt == nil || evt.IsNil() {
-		return nil
-	}
-	return evt
-}
+func (h *httpStats) GetEvent(e stats.Event) Event { _ = "STUB: not implemented"; return *new(Event) }
 
-// Level implements the HTTPStats interface.
-func (h *httpStats) Level() stats.Level {
-	return h.level
-}
+func (h *httpStats) Level() stats.Level { _ = "STUB: not implemented"; return *new(stats.Level) }
 
-// SetSendSize sets send size.
-func (h *httpStats) SetSendSize(size int) {
-	h.sendSize = size
-}
+func (h *httpStats) SetSendSize(size int) { _ = "STUB: not implemented"; return }
 
-// SetRecvSize sets recv size.
-func (h *httpStats) SetRecvSize(size int) {
-	h.recvSize = size
-}
+func (h *httpStats) SetRecvSize(size int) { _ = "STUB: not implemented"; return }
 
-// SetError sets error.
-func (h *httpStats) SetError(err error) {
-	h.err = err
-}
+func (h *httpStats) SetError(err error) { _ = "STUB: not implemented"; return }
 
-// SetPanicked sets if panicked.
-func (h *httpStats) SetPanicked(x interface{}) {
-	h.panicErr = x
-}
+func (h *httpStats) SetPanicked(x interface{}) { _ = "STUB: not implemented"; return }
 
-// SetLevel sets the level.
-func (h *httpStats) SetLevel(level stats.Level) {
-	h.level = level
-}
+func (h *httpStats) SetLevel(level stats.Level) { _ = "STUB: not implemented"; return }
 
-// Reset resets the stats.
-func (h *httpStats) Reset() {
-	h.err = nil
-	h.panicErr = nil
-	h.recvSize = 0
-	h.sendSize = 0
-	for i := range h.eventMap {
-		if h.eventMap[i] != nil {
-			h.eventMap[i].(*event).Recycle()
-			h.eventMap[i] = nil
-		}
-	}
-}
+func (h *httpStats) Reset() { _ = "STUB: not implemented"; return }
 
-// ImmutableView restricts the httpStats into a read-only traceinfo.HTTPStats.
-func (h *httpStats) ImmutableView() HTTPStats {
-	return h
-}
+func (h *httpStats) ImmutableView() HTTPStats { _ = "STUB: not implemented"; return *new(HTTPStats) }
 
-// NewHTTPStats creates a new HTTPStats.
-func NewHTTPStats() HTTPStats {
-	once.Do(func() {
-		stats.FinishInitialization()
-		maxEventNum = stats.MaxEventNum()
-	})
-	return &httpStats{
-		eventMap: make([]Event, maxEventNum),
-	}
-}
+func NewHTTPStats() HTTPStats { _ = "STUB: not implemented"; return *new(HTTPStats) }

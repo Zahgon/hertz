@@ -1,19 +1,3 @@
-/*
- * Copyright 2022 CloudWeGo Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package loadbalance
 
 import (
@@ -24,33 +8,19 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol"
 )
 
-// Loadbalancer picks instance for the given service discovery result.
 type Loadbalancer interface {
-	// Pick is used to select an instance according to discovery result
 	Pick(discovery.Result) discovery.Instance
 
-	// Rebalance is used to refresh the cache of load balance's information
 	Rebalance(discovery.Result)
 
-	// Delete is used to delete the cache of load balance's information when it is expired
 	Delete(string)
 
-	// Name returns the name of the Loadbalancer.
 	Name() string
 }
 
-// LoadbalancerCtx is an optional extension of Loadbalancer that is aware of
-// the per-call context and request. When a Loadbalancer also implements this
-// interface, BalancerFactory.GetInstance prefers PickCtx over Pick so the
-// balancer can make decisions based on ctx values or request fields (e.g.
-// region/zone affinity, tenant routing, header-based stickiness, gray release).
-//
-// Implementations should fall back to plain Pick semantics when ctx/req carry
-// no relevant information.
 type LoadbalancerCtx interface {
 	Loadbalancer
 
-	// PickCtx selects an instance with access to the request context.
 	PickCtx(ctx context.Context, req *protocol.Request, e discovery.Result) discovery.Instance
 }
 
@@ -64,22 +34,10 @@ var DefaultLbOpts = Options{
 	ExpireInterval:  DefaultExpireInterval,
 }
 
-// Options for LoadBalance option
 type Options struct {
-	// refresh discovery result timely
 	RefreshInterval time.Duration
 
-	// Balancer expire check interval
-	// we need remove idle Balancers for resource saving
 	ExpireInterval time.Duration
 }
 
-// Check checks option's param
-func (v *Options) Check() {
-	if v.RefreshInterval <= 0 {
-		v.RefreshInterval = DefaultRefreshInterval
-	}
-	if v.ExpireInterval <= 0 {
-		v.ExpireInterval = DefaultExpireInterval
-	}
-}
+func (v *Options) Check() { _ = "STUB: not implemented"; return }

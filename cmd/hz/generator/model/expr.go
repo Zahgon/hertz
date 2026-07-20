@@ -1,58 +1,22 @@
-/*
- * Copyright 2022 CloudWeGo Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package model
-
-import (
-	"fmt"
-	"strconv"
-)
-
-// The following expression types implement the Literal interface to produce
-// Go source code for default values defined in IDL files.
 
 type BoolExpression struct {
 	Src bool
 }
 
-func (boolExpr BoolExpression) Expression() string {
-	if boolExpr.Src {
-		return "true"
-	} else {
-		return "false"
-	}
-}
+func (boolExpr BoolExpression) Expression() string { _ = "STUB: not implemented"; return "" }
 
 type StringExpression struct {
 	Src string
 }
 
-func (stringExpr StringExpression) Expression() string {
-	return fmt.Sprintf("%q", stringExpr.Src)
-}
+func (stringExpr StringExpression) Expression() string { _ = "STUB: not implemented"; return "" }
 
-// NumberExpression stores the number as a raw string to preserve the original
-// IDL representation (e.g. hex literals, large numbers).
 type NumberExpression struct {
 	Src string
 }
 
-func (numExpr NumberExpression) Expression() string {
-	return numExpr.Src
-}
+func (numExpr NumberExpression) Expression() string { _ = "STUB: not implemented"; return "" }
 
 type ListExpression struct {
 	ElementType *Type
@@ -63,26 +27,15 @@ type IntExpression struct {
 	Src int
 }
 
-func (intExpr IntExpression) Expression() string {
-	return strconv.Itoa(intExpr.Src)
-}
+func (intExpr IntExpression) Expression() string { _ = "STUB: not implemented"; return "" }
 
 type DoubleExpression struct {
 	Src float64
 }
 
-func (doubleExpr DoubleExpression) Expression() string {
-	return strconv.FormatFloat(doubleExpr.Src, 'f', -1, 64)
-}
+func (doubleExpr DoubleExpression) Expression() string { _ = "STUB: not implemented"; return "" }
 
-func (listExpr ListExpression) Expression() string {
-	ret := "[]" + listExpr.ElementType.Name + "{\n"
-	for _, e := range listExpr.Elements {
-		ret += e.Expression() + ",\n"
-	}
-	ret += "\n}"
-	return ret
-}
+func (listExpr ListExpression) Expression() string { _ = "STUB: not implemented"; return "" }
 
 type MapExpression struct {
 	KeyType   *Type
@@ -90,11 +43,4 @@ type MapExpression struct {
 	Elements  map[string]Literal
 }
 
-func (mapExpr MapExpression) Expression() string {
-	ret := "map[" + mapExpr.KeyType.Name + "]" + mapExpr.ValueType.Name + "{\n"
-	for k, e := range mapExpr.Elements {
-		ret += fmt.Sprintf("%q: %s,\n", k, e.Expression())
-	}
-	ret += "\n}"
-	return ret
-}
+func (mapExpr MapExpression) Expression() string { _ = "STUB: not implemented"; return "" }

@@ -1,27 +1,9 @@
-/*
- * Copyright 2022 CloudWeGo Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package model
 
 var (
-	// BaseTypes enumerates all IDL primitive types mapped to Go types.
 	BaseTypes      = []*Type{TypeBool, TypeByte, TypeInt8, TypeInt16, TypeInt32, TypeInt64, TypeUint8, TypeUint16, TypeUint32, TypeUint64, TypeFloat64, TypeString, TypeBinary}
 	ContainerTypes = []*Type{TypeBaseList, TypeBaseMap, TypeBaseSet}
-	// BaseModel is a sentinel Model used as Scope for builtin types.
-	// Types with Scope == &BaseModel are treated as built-in and don't need cross-package qualification.
+
 	BaseModel = Model{}
 )
 
@@ -31,13 +13,13 @@ var (
 		Scope: &BaseModel,
 		Kind:  KindBool,
 	}
-	// TypeByte maps Thrift's "byte" to Go's "int8" (Thrift byte is signed).
+
 	TypeByte = &Type{
 		Name:  "int8",
 		Scope: &BaseModel,
 		Kind:  KindInt8,
 	}
-	// TypePbByte maps Protobuf's "bytes" element to Go's "byte" (unsigned).
+
 	TypePbByte = &Type{
 		Name:  "byte",
 		Scope: &BaseModel,
@@ -136,66 +118,14 @@ var (
 	}
 )
 
-// NewCategoryType creates a shallow copy of typ with a different Category.
-// Used when the same Go type has different IDL semantics (e.g. int64 as enum vs constant).
-func NewCategoryType(typ *Type, cg Category) *Type {
-	cyp := *typ
-	cyp.Category = cg
-	return &cyp
-}
+func NewCategoryType(typ *Type, cg Category) *Type { _ = "STUB: not implemented"; return nil }
 
-func NewStructType(name string, cg Category) *Type {
-	return &Type{
-		Name:     name,
-		Scope:    nil,
-		Kind:     KindStruct,
-		Category: cg,
-		Indirect: false,
-		Extra:    nil,
-		HasNew:   true,
-	}
-}
+func NewStructType(name string, cg Category) *Type { _ = "STUB: not implemented"; return nil }
 
-func NewFuncType(name string, cg Category) *Type {
-	return &Type{
-		Name:     name,
-		Scope:    nil,
-		Kind:     KindFunc,
-		Category: cg,
-		Indirect: false,
-		Extra:    nil,
-		HasNew:   false,
-	}
-}
+func NewFuncType(name string, cg Category) *Type { _ = "STUB: not implemented"; return nil }
 
-func IsBaseType(typ *Type) bool {
-	for _, t := range BaseTypes {
-		if typ == t {
-			return true
-		}
-	}
-	return false
-}
+func IsBaseType(typ *Type) bool { _ = "STUB: not implemented"; return false }
 
-func NewEnumType(name string, cg Category) *Type {
-	return &Type{
-		Name:     name,
-		Scope:    &BaseModel,
-		Kind:     KindInt,
-		Category: cg,
-		Indirect: false,
-		Extra:    nil,
-		HasNew:   true,
-	}
-}
+func NewEnumType(name string, cg Category) *Type { _ = "STUB: not implemented"; return nil }
 
-func NewOneofType(name string) *Type {
-	return &Type{
-		Name:     name,
-		Scope:    &BaseModel,
-		Kind:     KindInterface,
-		Indirect: false,
-		Extra:    nil,
-		HasNew:   true,
-	}
-}
+func NewOneofType(name string) *Type { _ = "STUB: not implemented"; return nil }
