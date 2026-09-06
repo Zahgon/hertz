@@ -1,36 +1,12 @@
-/*
- * Copyright 2022 CloudWeGo Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package generator
 
 import (
-	"fmt"
-	"path/filepath"
-	"strings"
 	"text/template"
 
 	"github.com/cloudwego/hertz/cmd/hz/generator/model"
-	"github.com/cloudwego/hertz/cmd/hz/generator/model/golang"
 	"github.com/cloudwego/hertz/cmd/hz/meta"
-	"github.com/cloudwego/hertz/cmd/hz/util"
 )
 
-//---------------------------------Backend----------------------------------
-
-// Option controls model code generation behavior.
 type Option string
 
 const (
@@ -38,134 +14,44 @@ const (
 	OptionTypedefAsTypeAlias Option = "TypedefAsTypeAlias"
 )
 
-// Backend abstracts the target language for model code generation.
-// Currently only Go is implemented; third-party backends are planned but not yet supported.
 type Backend interface {
 	Template() (*template.Template, error)
-	List() map[string]string                 // returns template name -> body mapping
-	SetOption(opts string) error             // configures generation options (e.g. MarshalEnumToText)
-	GetOptions() []string                    // returns active options
-	Funcs(name string, fn interface{}) error // registers custom template functions
+	List() map[string]string
+	SetOption(opts string) error
+	GetOptions() []string
+	Funcs(name string, fn interface{}) error
 }
 
 type GolangBackend struct{}
 
 func (gb *GolangBackend) Template() (*template.Template, error) {
-	return golang.Template()
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (gb *GolangBackend) List() map[string]string {
-	return golang.List()
-}
+func (gb *GolangBackend) List() map[string]string { _ = "STUB: not implemented"; return nil }
 
-func (gb *GolangBackend) SetOption(opts string) error {
-	return golang.SetOption(opts)
-}
+func (gb *GolangBackend) SetOption(opts string) error { _ = "STUB: not implemented"; return nil }
 
-func (gb *GolangBackend) GetOptions() []string {
-	return golang.GetOptions()
-}
+func (gb *GolangBackend) GetOptions() []string { _ = "STUB: not implemented"; return nil }
 
 func (gb *GolangBackend) Funcs(name string, fn interface{}) error {
-	return golang.Funcs(name, fn)
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func switchBackend(backend meta.Backend) Backend {
-	switch backend {
-	case meta.BackendGolang:
-		return &GolangBackend{}
-	}
-	return loadThirdPartyBackend(string(backend))
-}
+func switchBackend(backend meta.Backend) Backend { _ = "STUB: not implemented"; return *new(Backend) }
 
-func loadThirdPartyBackend(plugin string) Backend {
-	panic("no implement yet!")
-}
+func loadThirdPartyBackend(plugin string) Backend { _ = "STUB: not implemented"; return *new(Backend) }
 
-/**********************Generating*************************/
-
-// LoadBackend initializes the model template engine for the given backend.
-// It registers a "ROOT" template function that returns the current model being rendered,
-// allowing templates to access cross-model import information.
 func (pkgGen *HttpPackageGenerator) LoadBackend(backend meta.Backend) error {
-	bd := switchBackend(backend)
-	if bd == nil {
-		return fmt.Errorf("no found backend '%s'", backend)
-	}
-	for _, opt := range pkgGen.Options {
-		if err := bd.SetOption(string(opt)); err != nil {
-			return fmt.Errorf("set option %s error, err: %v", opt, err.Error())
-		}
-	}
-
-	err := bd.Funcs("ROOT", func() *model.Model {
-		return pkgGen.curModel
-	})
-	if err != nil {
-		return fmt.Errorf("register global function in model template failed, err: %v", err.Error())
-	}
-
-	tpl, err := bd.Template()
-	if err != nil {
-		return fmt.Errorf("load backend %s failed, err: %v", backend, err.Error())
-	}
-
-	if pkgGen.tpls == nil {
-		pkgGen.tpls = map[string]*template.Template{}
-	}
-	pkgGen.tpls[modelTplName] = tpl
-	pkgGen.loadedBackend = bd
+	_ = "STUB: not implemented"
 	return nil
 }
 
-// GenModel recursively resolves model file paths and generates Go source files.
-// It first processes all imported models (dependencies), then generates the current model.
-// The gen flag controls whether to actually render the template (false for dependency-only path resolution).
-// processedModels tracks already-visited models to avoid duplicate work.
 func (pkgGen *HttpPackageGenerator) GenModel(data *model.Model, gen bool) error {
-	if pkgGen.processedModels == nil {
-		pkgGen.processedModels = map[*model.Model]bool{}
-	}
-
-	if _, ok := pkgGen.processedModels[data]; !ok {
-		var path string
-		var updatePackage bool
-		if strings.HasPrefix(data.Package, pkgGen.ProjPackage) && data.PackageName != pkgGen.ProjPackage {
-			path = data.Package[len(pkgGen.ProjPackage):]
-		} else {
-			path = data.Package
-			updatePackage = true
-		}
-		modelDir := util.SubDir(pkgGen.ModelDir, path)
-		if updatePackage {
-			data.Package = util.SubPackage(pkgGen.ProjPackage, modelDir)
-		}
-		data.FilePath = filepath.Join(modelDir, util.BaseNameAndTrim(data.FilePath)+".go")
-
-		pkgGen.processedModels[data] = true
-	}
-
-	for _, dep := range data.Imports {
-		if err := pkgGen.GenModel(dep, false); err != nil {
-			return fmt.Errorf("generate model %s failed, err: %v", dep.FilePath, err.Error())
-		}
-	}
-
-	if gen && !data.IsEmpty() {
-		pkgGen.curModel = data
-		removeDuplicateImport(data)
-		err := pkgGen.TemplateGenerator.Generate(data, modelTplName, data.FilePath, false)
-		pkgGen.curModel = nil
-		return err
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
-// Idls with the same Package do not need to refer to each other
-func removeDuplicateImport(data *model.Model) {
-	for k, v := range data.Imports {
-		if data.Package == v.Package {
-			delete(data.Imports, k)
-		}
-	}
-}
+func removeDuplicateImport(data *model.Model) { _ = "STUB: not implemented"; return }

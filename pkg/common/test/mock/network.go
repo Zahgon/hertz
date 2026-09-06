@@ -1,27 +1,8 @@
-/*
- * Copyright 2022 CloudWeGo Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package mock
 
 import (
-	"bytes"
 	"crypto/tls"
-	"io"
 	"net"
-	"strings"
 	"time"
 
 	errs "github.com/cloudwego/hertz/pkg/common/errors"
@@ -48,98 +29,61 @@ type Recorder interface {
 	WroteLen() int
 }
 
-func (m *Conn) SetWriteTimeout(t time.Duration) error {
-	// TODO implement me
-	return nil
-}
+func (m *Conn) SetWriteTimeout(t time.Duration) error { _ = "STUB: not implemented"; return nil }
 
 type SlowReadConn struct {
 	*Conn
 }
 
 func (m *SlowReadConn) SetWriteTimeout(t time.Duration) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (m *SlowReadConn) SetReadTimeout(t time.Duration) error {
-	m.Conn.rtimeout = t
-	return nil
-}
+func (m *SlowReadConn) SetReadTimeout(t time.Duration) error { _ = "STUB: not implemented"; return nil }
 
 func SlowReadDialer(addr string) (network.Conn, error) {
-	return NewSlowReadConn(""), nil
+	_ = "STUB: not implemented"
+	return *new(network.Conn), nil
 }
 
 func SlowWriteDialer(addr string) (network.Conn, error) {
-	return NewSlowWriteConn(""), nil
+	_ = "STUB: not implemented"
+	return *new(network.Conn), nil
 }
 
-func (m *Conn) ReadBinary(n int) (p []byte, err error) {
-	return m.zr.(netpoll.Reader).ReadBinary(n)
-}
+func (m *Conn) ReadBinary(n int) (p []byte, err error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (m *Conn) Read(b []byte) (n int, err error) {
-	return netpoll.NewIOReader(m.zr.(netpoll.Reader)).Read(b)
-}
+func (m *Conn) Read(b []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (m *Conn) Write(b []byte) (n int, err error) {
-	return netpoll.NewIOWriter(m.zw.(netpoll.ReadWriter)).Write(b)
-}
+func (m *Conn) Write(b []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (m *Conn) Release() error {
-	return nil
-}
+func (m *Conn) Release() error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) Peek(i int) ([]byte, error) {
-	b, err := m.zr.Peek(i)
-	if err != nil || len(b) != i {
-		if m.rtimeout <= 0 {
-			// simulate timeout forever
-			select {}
-		}
-		time.Sleep(m.rtimeout)
-		return nil, errs.ErrTimeout
-	}
-	return b, err
-}
+func (m *Conn) Peek(i int) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (m *Conn) Skip(n int) error {
-	return m.zr.Skip(n)
-}
+func (m *Conn) Skip(n int) error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) ReadByte() (byte, error) {
-	return m.zr.ReadByte()
-}
+func (m *Conn) ReadByte() (byte, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (m *Conn) Len() int {
-	return m.zr.Len()
-}
+func (m *Conn) Len() int { _ = "STUB: not implemented"; return 0 }
 
-func (m *Conn) Malloc(n int) (buf []byte, err error) {
-	m.wroteLen += n
-	return m.zw.Malloc(n)
-}
+func (m *Conn) Malloc(n int) (buf []byte, err error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (m *Conn) WriteBinary(b []byte) (n int, err error) {
-	n, err = m.zw.WriteBinary(b)
-	m.wroteLen += n
-	return n, err
-}
+func (m *Conn) WriteBinary(b []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (m *Conn) Flush() error {
-	return m.zw.Flush()
-}
+func (m *Conn) Flush() error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) WriterRecorder() Recorder {
-	return &recorder{c: m, Reader: m.zw}
-}
+func (m *Conn) WriterRecorder() Recorder { _ = "STUB: not implemented"; return *new(Recorder) }
 
 func (m *Conn) GetReadTimeout() time.Duration {
-	return m.rtimeout
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
 func (m *Conn) GetWriteTimeout() time.Duration {
-	return m.wtimeout
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
 type recorder struct {
@@ -147,52 +91,23 @@ type recorder struct {
 	network.Reader
 }
 
-func (r *recorder) WroteLen() int {
-	return r.c.wroteLen
-}
+func (r *recorder) WroteLen() int { _ = "STUB: not implemented"; return 0 }
 
-func (m *SlowReadConn) Peek(i int) ([]byte, error) {
-	b, err := m.zr.Peek(i)
-	if m.rtimeout > 0 {
-		time.Sleep(m.rtimeout)
-	} else {
-		time.Sleep(100 * time.Millisecond)
-	}
-	if err != nil || len(b) != i {
-		return nil, ErrReadTimeout
-	}
-	return b, err
-}
+func (m *SlowReadConn) Peek(i int) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func NewConn(source string) *Conn {
-	zr := netpoll.NewReader(strings.NewReader(source))
-	zw := netpoll.NewReadWriter(&bytes.Buffer{})
-
-	return &Conn{
-		zr: zr,
-		zw: zw,
-	}
-}
+func NewConn(source string) *Conn { _ = "STUB: not implemented"; return nil }
 
 type BrokenConn struct {
 	*Conn
 }
 
-func (o *BrokenConn) Peek(i int) ([]byte, error) {
-	return nil, io.ErrUnexpectedEOF
-}
+func (o *BrokenConn) Peek(i int) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (o *BrokenConn) Read(b []byte) (n int, err error) {
-	return 0, io.ErrUnexpectedEOF
-}
+func (o *BrokenConn) Read(b []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (o *BrokenConn) Flush() error {
-	return errs.ErrConnectionClosed
-}
+func (o *BrokenConn) Flush() error { _ = "STUB: not implemented"; return nil }
 
-func NewBrokenConn(source string) *BrokenConn {
-	return &BrokenConn{Conn: NewConn(source)}
-}
+func NewBrokenConn(source string) *BrokenConn { _ = "STUB: not implemented"; return nil }
 
 type OneTimeConn struct {
 	isRead        bool
@@ -201,57 +116,24 @@ type OneTimeConn struct {
 	*Conn
 }
 
-func (o *OneTimeConn) Peek(n int) ([]byte, error) {
-	if o.isRead {
-		return nil, io.EOF
-	}
-	return o.Conn.Peek(n)
-}
+func (o *OneTimeConn) Peek(n int) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (o *OneTimeConn) Skip(n int) error {
-	if o.isRead {
-		return io.EOF
-	}
-	o.contentLength -= n
+func (o *OneTimeConn) Skip(n int) error { _ = "STUB: not implemented"; return nil }
 
-	if o.contentLength == 0 {
-		o.isRead = true
-	}
+func (o *OneTimeConn) Flush() error { _ = "STUB: not implemented"; return nil }
 
-	return o.Conn.Skip(n)
-}
+func NewOneTimeConn(source string) *OneTimeConn { _ = "STUB: not implemented"; return nil }
 
-func (o *OneTimeConn) Flush() error {
-	if o.isFlushed {
-		return errs.ErrConnectionClosed
-	}
-	o.isFlushed = true
-	return o.Conn.Flush()
-}
-
-func NewOneTimeConn(source string) *OneTimeConn {
-	return &OneTimeConn{isRead: false, isFlushed: false, Conn: NewConn(source), contentLength: len(source)}
-}
-
-func NewSlowReadConn(source string) *SlowReadConn {
-	return &SlowReadConn{Conn: NewConn(source)}
-}
+func NewSlowReadConn(source string) *SlowReadConn { _ = "STUB: not implemented"; return nil }
 
 type ErrorReadConn struct {
 	*Conn
 	errorToReturn error
 }
 
-func NewErrorReadConn(err error) *ErrorReadConn {
-	return &ErrorReadConn{
-		Conn:          NewConn(""),
-		errorToReturn: err,
-	}
-}
+func NewErrorReadConn(err error) *ErrorReadConn { _ = "STUB: not implemented"; return nil }
 
-func (er *ErrorReadConn) Peek(n int) ([]byte, error) {
-	return nil, er.errorToReturn
-}
+func (er *ErrorReadConn) Peek(n int) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 type SlowWriteConn struct {
 	*Conn
@@ -259,77 +141,41 @@ type SlowWriteConn struct {
 }
 
 func (m *SlowWriteConn) SetWriteTimeout(t time.Duration) error {
-	m.writeTimeout = t
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func NewSlowWriteConn(source string) *SlowWriteConn {
-	return &SlowWriteConn{NewConn(source), 0}
-}
+func NewSlowWriteConn(source string) *SlowWriteConn { _ = "STUB: not implemented"; return nil }
 
-func (m *SlowWriteConn) Flush() error {
-	err := m.zw.Flush()
-	if err == nil {
-		time.Sleep(m.writeTimeout)
-		return ErrWriteTimeout
-	}
-	return err
-}
+func (m *SlowWriteConn) Flush() error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) Close() error {
-	return nil
-}
+func (m *Conn) Close() error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) LocalAddr() net.Addr {
-	return nil
-}
+func (m *Conn) LocalAddr() net.Addr { _ = "STUB: not implemented"; return *new(net.Addr) }
 
-func (m *Conn) RemoteAddr() net.Addr {
-	return nil
-}
+func (m *Conn) RemoteAddr() net.Addr { _ = "STUB: not implemented"; return *new(net.Addr) }
 
-func (m *Conn) SetDeadline(t time.Time) error {
-	m.rtimeout = -time.Since(t)
-	m.wtimeout = m.rtimeout
-	return nil
-}
+func (m *Conn) SetDeadline(t time.Time) error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) SetReadDeadline(t time.Time) error {
-	m.rtimeout = -time.Since(t)
-	return nil
-}
+func (m *Conn) SetReadDeadline(t time.Time) error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) SetWriteDeadline(t time.Time) error {
-	panic("implement me")
-}
+func (m *Conn) SetWriteDeadline(t time.Time) error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) Reader() network.Reader {
-	return m.zr
-}
+func (m *Conn) Reader() network.Reader { _ = "STUB: not implemented"; return *new(network.Reader) }
 
-func (m *Conn) Writer() network.Writer {
-	return m.zw
-}
+func (m *Conn) Writer() network.Writer { _ = "STUB: not implemented"; return *new(network.Writer) }
 
-func (m *Conn) IsActive() bool {
-	panic("implement me")
-}
+func (m *Conn) IsActive() bool { _ = "STUB: not implemented"; return false }
 
-func (m *Conn) SetIdleTimeout(timeout time.Duration) error {
-	return nil
-}
+func (m *Conn) SetIdleTimeout(timeout time.Duration) error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) SetReadTimeout(t time.Duration) error {
-	m.rtimeout = t
-	return nil
-}
+func (m *Conn) SetReadTimeout(t time.Duration) error { _ = "STUB: not implemented"; return nil }
 
-func (m *Conn) SetOnRequest(on netpoll.OnRequest) error {
-	panic("implement me")
-}
+func (m *Conn) SetOnRequest(on netpoll.OnRequest) error { _ = "STUB: not implemented"; return nil }
 
 func (m *Conn) AddCloseCallback(callback netpoll.CloseCallback) error {
-	panic("implement me")
+	_ = "STUB: not implemented"
+	return nil
 }
 
 type StreamConn struct {
@@ -337,50 +183,26 @@ type StreamConn struct {
 	Data        []byte
 }
 
-func NewStreamConn() *StreamConn {
-	return &StreamConn{
-		Data: make([]byte, 1<<15, 1<<16),
-	}
-}
+func NewStreamConn() *StreamConn { _ = "STUB: not implemented"; return nil }
 
-func (m *StreamConn) Peek(n int) ([]byte, error) {
-	if len(m.Data) >= n {
-		return m.Data[:n], nil
-	}
-	if n == 1 {
-		m.Data = m.Data[:cap(m.Data)]
-		return m.Data[:1], nil
-	}
-	return nil, errs.NewPublic("not enough data")
-}
+func (m *StreamConn) Peek(n int) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (m *StreamConn) Skip(n int) error {
-	if len(m.Data) >= n {
-		m.Data = m.Data[n:]
-		return nil
-	}
-	return errs.NewPublic("not enough data")
-}
+func (m *StreamConn) Skip(n int) error { _ = "STUB: not implemented"; return nil }
 
-func (m *StreamConn) Release() error {
-	m.HasReleased = true
-	return nil
-}
+func (m *StreamConn) Release() error { _ = "STUB: not implemented"; return nil }
 
-func (m *StreamConn) Len() int {
-	return len(m.Data)
-}
+func (m *StreamConn) Len() int { _ = "STUB: not implemented"; return 0 }
 
-func (m *StreamConn) ReadByte() (byte, error) {
-	panic("implement me")
-}
+func (m *StreamConn) ReadByte() (byte, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func (m *StreamConn) ReadBinary(n int) (p []byte, err error) {
-	panic("implement me")
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func DialerFun(addr string) (network.Conn, error) {
-	return NewConn(""), nil
+	_ = "STUB: not implemented"
+	return *new(network.Conn), nil
 }
 
 type MockWriter struct {
@@ -391,30 +213,19 @@ type MockWriter struct {
 	MockFlush       func() error
 }
 
-func NewMockWriter(w network.Writer) *MockWriter {
-	return &MockWriter{w: w}
-}
+func NewMockWriter(w network.Writer) *MockWriter { _ = "STUB: not implemented"; return nil }
 
 func (m *MockWriter) Malloc(n int) (buf []byte, err error) {
-	if m.MockMalloc != nil {
-		return m.MockMalloc(n)
-	}
-	return m.w.Malloc(n)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *MockWriter) WriteBinary(b []byte) (n int, err error) {
-	if m.MockWriteBinary != nil {
-		return m.MockWriteBinary(b)
-	}
-	return m.w.WriteBinary(b)
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func (m *MockWriter) Flush() error {
-	if m.MockFlush != nil {
-		return m.MockFlush()
-	}
-	return m.w.Flush()
-}
+func (m *MockWriter) Flush() error { _ = "STUB: not implemented"; return nil }
 
 type TLSConn struct {
 	network.Conn
@@ -424,14 +235,11 @@ type TLSConn struct {
 
 var _ network.ConnTLSer = (*TLSConn)(nil)
 
-func (c *TLSConn) Handshake() error {
-	return c.HandshakeErr
-}
+func (c *TLSConn) Handshake() error { _ = "STUB: not implemented"; return nil }
 
 func (c *TLSConn) ConnectionState() tls.ConnectionState {
-	return tls.ConnectionState{}
+	_ = "STUB: not implemented"
+	return *new(tls.ConnectionState)
 }
 
-func NewTLSConn(conn network.Conn) *TLSConn {
-	return &TLSConn{Conn: conn}
-}
+func NewTLSConn(conn network.Conn) *TLSConn { _ = "STUB: not implemented"; return nil }

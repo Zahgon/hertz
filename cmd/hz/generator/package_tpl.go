@@ -1,19 +1,3 @@
-/*
- * Copyright 2022 CloudWeGo Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package generator
 
 var (
@@ -24,9 +8,9 @@ var (
 	handlerSingleTplName    = "handler_single.go"
 	modelTplName            = "model.go"
 	registerTplName         = "register.go"
-	clientTplName           = "client.go"       // generate a default client for server
-	hertzClientTplName      = "hertz_client.go" // underlying client for client command
-	idlClientName           = "idl_client.go"   // client of service for quick call
+	clientTplName           = "client.go"
+	hertzClientTplName      = "hertz_client.go"
+	idlClientName           = "idl_client.go"
 
 	insertPointNew        = "//INSERT_POINT: DO NOT DELETE THIS LINE!"
 	insertPointPatternNew = `//INSERT_POINT\: DO NOT DELETE THIS LINE\!`
@@ -45,13 +29,7 @@ var templateNameSet = map[string]string{
 	idlClientName:           idlClientName,
 }
 
-func IsDefaultPackageTpl(name string) bool {
-	if _, exist := templateNameSet[name]; exist {
-		return true
-	}
-
-	return false
-}
+func IsDefaultPackageTpl(name string) bool { _ = "STUB: not implemented"; return false }
 
 var defaultPkgConfig = TemplateConfig{
 	Layouts: []Template{
@@ -160,7 +138,7 @@ func GeneratedRegister(r *server.Hertz){
 }
 `,
 		},
-		// Model tpl is imported by model generator. Here only decides model directory.
+
 		{
 			Path: defaultModelDir + sp + modelTplName,
 			Body: ``,

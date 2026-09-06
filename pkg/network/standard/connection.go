@@ -1,35 +1,14 @@
-/*
- * Copyright 2022 CloudWeGo Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package standard
 
 import (
 	"crypto/tls"
-	"errors"
 	"io"
 	"net"
-	"strconv"
-	"syscall"
 	"time"
 
 	"github.com/cloudwego/gopkg/bufiox"
 	"github.com/cloudwego/gopkg/net/connstate"
 
-	errs "github.com/cloudwego/hertz/pkg/common/errors"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/network"
 )
 
@@ -48,253 +27,80 @@ type Conn struct {
 	buf [8]byte
 }
 
-func (c *Conn) ToHertzError(err error) error {
-	if errors.Is(err, syscall.EPIPE) || errors.Is(err, syscall.ENOTCONN) {
-		return errs.ErrConnectionClosed
-	}
-	if netErr, ok := err.(*net.OpError); ok && netErr.Timeout() {
-		return errs.ErrTimeout
-	}
+func (c *Conn) ToHertzError(err error) error { _ = "STUB: not implemented"; return nil }
 
-	return err
-}
+func (c *Conn) SetWriteTimeout(t time.Duration) error { _ = "STUB: not implemented"; return nil }
 
-func (c *Conn) SetWriteTimeout(t time.Duration) error {
-	if t <= 0 {
-		return c.c.SetWriteDeadline(time.Time{})
-	}
-	return c.c.SetWriteDeadline(time.Now().Add(t))
-}
+func (c *Conn) SetReadTimeout(t time.Duration) error { _ = "STUB: not implemented"; return nil }
 
-func (c *Conn) SetReadTimeout(t time.Duration) error {
-	if t <= 0 {
-		return c.c.SetReadDeadline(time.Time{})
-	}
-	return c.c.SetReadDeadline(time.Now().Add(t))
-}
-
-// IsHealthy checks whether the peer has closed the connection without
-// consuming data from the buffered reader used by the HTTP protocol.
 func (c *Conn) IsHealthy(probeTimeout, _ time.Duration) bool {
-	if c == nil || c.c == nil || probeTimeout <= 0 || c.Len() > 0 {
-		return false
-	}
-	if c.healthChecker != nil {
-		return c.healthChecker.isHealthy()
-	}
-	return c.isHealthyWithTimedPeek(probeTimeout)
+	_ = "STUB: not implemented"
+	return false
 }
 
 func (c *Conn) isHealthyWithTimedPeek(timeout time.Duration) bool {
-	if err := c.SetReadTimeout(timeout); err != nil {
-		return false
-	}
-	p, err := c.Peek(1)
-	if resetErr := c.SetReadTimeout(0); resetErr != nil {
-		return false
-	}
-	if len(p) != 0 {
-		return false
-	}
-	var timeoutErr net.Error
-	if !errors.As(err, &timeoutErr) || !timeoutErr.Timeout() {
-		return false
-	}
-	// DefaultReader intentionally retains read errors. A successful timeout
-	// probe has no buffered data, so release its empty buffer and replace the
-	// reader before the connection is returned to the protocol.
-	if err := c.br.Release(nil); err != nil {
-		return false
-	}
-	c.br = bufiox.NewDefaultReaderSize(c.c, c.readerSize)
-	return true
+	_ = "STUB: not implemented"
+	return false
 }
 
 type TLSConn struct {
 	Conn
 }
 
-// Peek returns the next n bytes without advancing the reader. If Peek returns
-// fewer than n bytes, it also returns an error explaining why the read is short.
-func (c *Conn) Peek(n int) ([]byte, error) {
-	buf, err := c.br.Peek(n)
-	// bufiox readAtLeast converts partial-read+EOF to ErrUnexpectedEOF,
-	// but hertz protocol code expects the original io.EOF.
-	if err == io.ErrUnexpectedEOF {
-		err = io.EOF
-	}
-	return buf, err
-}
+func (c *Conn) Peek(n int) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-// Skip discards the next n bytes.
-func (c *Conn) Skip(n int) error {
-	if c.Len() < n {
-		return errs.NewPrivate("skip[" + strconv.Itoa(n) + "] not enough")
-	}
-	return c.br.Skip(n)
-}
+func (c *Conn) Skip(n int) error { _ = "STUB: not implemented"; return nil }
 
-// Release frees internal read buffers.
-func (c *Conn) Release() error {
-	return c.br.Release(nil)
-}
+func (c *Conn) Release() error { _ = "STUB: not implemented"; return nil }
 
-// Len returns the total length of the readable data in the reader.
-func (c *Conn) Len() int {
-	return c.br.Buffered()
-}
+func (c *Conn) Len() int { _ = "STUB: not implemented"; return 0 }
 
-// ReadByte is used to read one byte with advancing the read pointer.
-func (c *Conn) ReadByte() (b byte, err error) {
-	// Use Read instead of Peek+Skip to avoid holding a ref to the underlying buffer.
-	_, err = c.br.Read(c.buf[:1])
-	if err == nil {
-		b = c.buf[0]
-	}
-	return
-}
+func (c *Conn) ReadByte() (b byte, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-// ReadBinary is used to read next n byte with copy, and the read pointer will be advanced.
-func (c *Conn) ReadBinary(n int) ([]byte, error) {
-	out := make([]byte, n)
-	_, err := c.br.ReadBinary(out)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
+func (c *Conn) ReadBinary(n int) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-// Read implements io.Reader.
-func (c *Conn) Read(b []byte) (int, error) {
-	return c.br.Read(b)
-}
+func (c *Conn) Read(b []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
-// Write calls Write syscall directly to send data.
-// Will flush buffer immediately, for performance considerations use WriteBinary instead.
-func (c *Conn) Write(b []byte) (n int, err error) {
-	if err = c.Flush(); err != nil {
-		return
-	}
-	return c.c.Write(b)
-}
+func (c *Conn) Write(b []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-// ReadFrom implements io.ReaderFrom. If the underlying writer
-// supports the ReadFrom method, this calls the underlying ReadFrom
-// without buffering.
-func (c *Conn) ReadFrom(r io.Reader) (n int64, err error) {
-	if err = c.Flush(); err != nil {
-		return
-	}
+func (c *Conn) ReadFrom(r io.Reader) (n int64, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-	if w, ok := c.c.(io.ReaderFrom); ok {
-		n, err = w.ReadFrom(r)
-		return
-	}
+func (c *Conn) Close() error { _ = "STUB: not implemented"; return nil }
 
-	var buf [32 * 1024]byte
-	for {
-		m, rerr := r.Read(buf[:])
-		if m > 0 {
-			dst, werr := c.bw.Malloc(m)
-			if werr != nil {
-				return n, werr
-			}
-			copy(dst, buf[:m])
-			n += int64(m)
-		}
-		if rerr != nil {
-			if rerr != io.EOF {
-				err = rerr
-			}
-			return
-		}
-	}
-}
+func (c *Conn) LocalAddr() net.Addr { _ = "STUB: not implemented"; return *new(net.Addr) }
 
-// Close closes the connection
-func (c *Conn) Close() error {
-	// Close stater first to stop epoll monitoring
-	if c.stater != nil {
-		c.stater.Close()
-		c.stater = nil
-	}
-	return c.c.Close()
-}
+func (c *Conn) RemoteAddr() net.Addr { _ = "STUB: not implemented"; return *new(net.Addr) }
 
-// LocalAddr returns the local address of the connection.
-func (c *Conn) LocalAddr() net.Addr {
-	return c.c.LocalAddr()
-}
+func (c *Conn) SetDeadline(t time.Time) error { _ = "STUB: not implemented"; return nil }
 
-// RemoteAddr returns the remote address of the connection.
-func (c *Conn) RemoteAddr() net.Addr {
-	return c.c.RemoteAddr()
-}
+func (c *Conn) SetReadDeadline(t time.Time) error { _ = "STUB: not implemented"; return nil }
 
-// SetDeadline sets the connection deadline.
-func (c *Conn) SetDeadline(t time.Time) error {
-	return c.c.SetDeadline(t)
-}
+func (c *Conn) SetWriteDeadline(t time.Time) error { _ = "STUB: not implemented"; return nil }
 
-// SetReadDeadline sets the read deadline of the connection.
-func (c *Conn) SetReadDeadline(t time.Time) error {
-	return c.c.SetReadDeadline(t)
-}
+func (c *Conn) Malloc(n int) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-// SetWriteDeadline sets the write deadline of the connection.
-func (c *Conn) SetWriteDeadline(t time.Time) error {
-	return c.c.SetWriteDeadline(t)
-}
+func (c *Conn) WriteBinary(b []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
-// Malloc will provide a n bytes buffer to send data.
-func (c *Conn) Malloc(n int) ([]byte, error) {
-	return c.bw.Malloc(n)
-}
-
-// WriteBinary will use the user buffer to flush.
-// NOTE: Before flush successfully, the buffer b should be valid.
-func (c *Conn) WriteBinary(b []byte) (int, error) {
-	return c.bw.WriteBinary(b)
-}
-
-// Flush will send data to the peer end.
-func (c *Conn) Flush() error {
-	return c.bw.Flush()
-}
+func (c *Conn) Flush() error { _ = "STUB: not implemented"; return nil }
 
 func (c *Conn) HandleSpecificError(err error, rip string) (needIgnore bool) {
-	if errors.Is(err, syscall.EPIPE) || errors.Is(err, syscall.ECONNRESET) {
-		hlog.SystemLogger().Debugf("Go net library error=%s, remoteAddr=%s", err.Error(), rip)
-		return true
-	}
+	_ = "STUB: not implemented"
 	return false
 }
 
-func (c *TLSConn) Handshake() error {
-	return c.c.(network.ConnTLSer).Handshake()
-}
+func (c *TLSConn) Handshake() error { _ = "STUB: not implemented"; return nil }
 
 func (c *TLSConn) ConnectionState() tls.ConnectionState {
-	return c.c.(network.ConnTLSer).ConnectionState()
+	_ = "STUB: not implemented"
+	return *new(tls.ConnectionState)
 }
 
 func newConn(c net.Conn, size int) network.Conn {
-	return &Conn{
-		c:             c,
-		br:            bufiox.NewDefaultReaderSize(c, size),
-		bw:            bufiox.NewDefaultWriter(c),
-		healthChecker: newTCPHealthChecker(c),
-		readerSize:    size,
-	}
+	_ = "STUB: not implemented"
+	return *new(network.Conn)
 }
 
 func newTLSConn(c net.Conn, size int) network.Conn {
-	return &TLSConn{
-		Conn{
-			c:          c,
-			br:         bufiox.NewDefaultReaderSize(c, size),
-			bw:         bufiox.NewDefaultWriter(c),
-			readerSize: size,
-		},
-	}
+	_ = "STUB: not implemented"
+	return *new(network.Conn)
 }
